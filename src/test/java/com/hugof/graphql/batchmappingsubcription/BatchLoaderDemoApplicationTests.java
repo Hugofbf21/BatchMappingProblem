@@ -1,11 +1,10 @@
-// src/test/java/com/hugof/graphql/batchmappingsubcription/HouseControllerIntegrationTest.java
+
 package com.hugof.graphql.batchmappingsubcription;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureGraphQlTester;
 import reactor.test.StepVerifier;
@@ -57,13 +56,18 @@ class HouseControllerIntegrationTest {
                     System.out.println("Owners: " + owners);
                     assert owners.size() == 10;
                 })
-                .expectNoEvent(Duration.ofSeconds(5))
+                .expectNoEvent(Duration.ofSeconds(2))
                 .thenCancel()
                 .verify();
 
 
     }
 
+    /**
+     * This is the problematic test that should use batch mapping, but it is not batching
+     * It is expected to return 10 owners with 1 schemaMappingEntity and 1 batchMappingEntity each
+     * The batchMappingCounter should be 1 we don't want to call the batch mapping 10 times
+     */
     @Test
     void testBatchWorkingOnSubscription() {
         batchMappingCounter.reset();
@@ -109,7 +113,7 @@ class HouseControllerIntegrationTest {
                     // Check batch mapping counter it should be 1 since we are using batch mapping but for some reason it is not batching
                     assertEquals(1, batchMappingCounter.getCount(), "Batch mapping counter should be 10");
                 })
-                .expectNoEvent(Duration.ofSeconds(5))
+                .expectNoEvent(Duration.ofSeconds(2))
                 .thenCancel()
                 .verify();
     }
