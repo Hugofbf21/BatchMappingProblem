@@ -1,0 +1,25 @@
+type Query {
+    me: Owner
+    owners: [Owner]
+}
+
+type Subscription {
+    allOwners: [Owner]
+    allOwnersWithPublisher : [Owner]
+}
+
+type SchemaMappingEntity {
+    id: ID!
+    name: String!
+}
+type BatchMappingEntity {
+    id: ID!
+    name: String!
+}
+
+type Owner {
+    id: ID!
+    name: String!
+    schemaMappingEntities: [SchemaMappingEntity]
+    batchMappingEntities: [BatchMappingEntity]
+}
